@@ -47,7 +47,7 @@
                     android:id="@+id/meta_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#333"
+                    android:background="@color/theme_primary"
                     android:layout_gravity="bottom"
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/detail_inner_horiz_margin"
@@ -62,6 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"
+                        android:text="test"
                         android:fontFamily="sans-serif-condensed"
                         android:textColor="#fff"
                         android:textStyle="bold"
@@ -93,16 +94,16 @@
         </FrameLayout>
     </com.example.xyzreader.ui.ObservableScrollView>
 
-    <ImageButton android:id="@+id/share_fab"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/share_fab"
         android:stateListAnimator="@anim/fab_state_list_anim"
-        android:background="@drawable/add_fab_background"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
         android:src="@drawable/ic_share"
         android:elevation="@dimen/fab_elevation"
-        android:contentDescription="@string/action_share" />
+        android:contentDescription="@string/action_share"/>
 
 </com.example.xyzreader.ui.DrawInsetsFrameLayout>
