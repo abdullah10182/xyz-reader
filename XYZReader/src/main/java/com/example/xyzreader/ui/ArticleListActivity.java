@@ -8,22 +8,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.google.android.material.appbar.AppBarLayout;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,6 +58,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private ImageView mLogo;
     private boolean mIsRefreshing = false;
+    private Context mContext;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -64,6 +71,8 @@ public class ArticleListActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().hide();
+
+        mContext = this;
 
         setContentView(R.layout.activity_article_list);
 
@@ -104,22 +113,26 @@ public class ArticleListActivity extends AppCompatActivity implements
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                    int appBarLayoutHeight = getActionBarHeight(mContext);
+                    int heightLogo = mLogo.getHeight();
                     AnimatorSet set = new AnimatorSet();
-                    int widthOfScreen = appBarLayout.getWidth();
-                    int widthHeroImage = mLogo.getWidth();
+                    System.out.println(appBarLayoutHeight);
                     set.playTogether(
-                            ObjectAnimator.ofFloat(mLogo, "translationY", -110f).setDuration(300),
-                            ObjectAnimator.ofFloat(mLogo, "scaleY", .5f).setDuration(500),
-                            ObjectAnimator.ofFloat(mLogo, "scaleX", .5f).setDuration(500)
+                            ObjectAnimator.ofFloat(mLogo, "translationY", appBarLayoutHeight + (heightLogo/4)).setDuration(300),
+                            ObjectAnimator.ofFloat(mLogo, "scaleY", 1f).setDuration(500),
+                            ObjectAnimator.ofFloat(mLogo, "scaleX", 1f).setDuration(500)
                     );
                     set.start();
                 } else if (verticalOffset == 0) {
                     // If expanded, then do this
+                    int appBarLayoutHeight = appBarLayout.getHeight();
+                    int heightLogo = mLogo.getHeight();
+                    System.out.println(appBarLayoutHeight);
                     AnimatorSet set = new AnimatorSet();
                     set.playTogether(
-                            ObjectAnimator.ofFloat(mLogo, "translationY", 0f).setDuration(300),
-                            ObjectAnimator.ofFloat(mLogo, "scaleY", 1f).setDuration(500),
-                            ObjectAnimator.ofFloat(mLogo, "scaleX", 1f).setDuration(500)
+                            ObjectAnimator.ofFloat(mLogo, "translationY", (appBarLayoutHeight/2f - (heightLogo/2f))).setDuration(300),
+                            ObjectAnimator.ofFloat(mLogo, "scaleY", 2f).setDuration(500),
+                            ObjectAnimator.ofFloat(mLogo, "scaleX", 2f).setDuration(500)
                     );
                     set.start();
                 }
@@ -158,6 +171,14 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private void updateRefreshingUI() {
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
+    }
+
+    public static int getActionBarHeight(Context context) {
+        int[] textSizeAttr = new int[]{R.attr.actionBarSize};
+        TypedArray a = context.obtainStyledAttributes(new TypedValue().data,  textSizeAttr);
+        int height = a.getDimensionPixelSize(0, 0);
+        a.recycle();
+        return height;
     }
 
     @Override
@@ -245,7 +266,16 @@ public class ArticleListActivity extends AppCompatActivity implements
 //                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
 //                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
 //            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-            Glide.with(holder.thumbnailView.getContext()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL)).into(holder.thumbnailView);
+//            Glide.with(holder.thumbnailView.getContext())
+//                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
+//                    .placeholder(R.drawable.ic_arrow_back)
+//                    .override(0, Target.SIZE_ORIGINAL)
+//                    .into(holder.thumbnailView);
+            Picasso.get()
+                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
+                    .placeholder(R.drawable.ic_arrow_back)
+                    //.error(R.drawable.image_error_404)
+                    .into(holder.thumbnailView);
         }
 
         @Override

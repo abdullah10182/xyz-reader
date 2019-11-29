@@ -47,7 +47,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
 
-        //getSupportActionBar().hide();
+        getSupportActionBar().hide();
 
         setContentView(R.layout.activity_article_detail);
 
